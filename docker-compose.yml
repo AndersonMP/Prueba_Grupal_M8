@@ -1,0 +1,42 @@
+# version: "3.8"
+
+services:
+  mysql:
+    container_name: mysql_biblioteca
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  adminer:
+    container_name: adminer_biblioteca
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  backend:
+    container_name: biblioteca
+    image: biblioteca
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    volumes:
+      - ./:/usr/src/app
+
+volumes:
+  mysql_data:
