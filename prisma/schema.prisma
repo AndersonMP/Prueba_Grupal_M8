@@ -17,6 +17,9 @@ model Usuario {
   id Int @id @default(autoincrement())
   email String @unique
   password String
+  rol String @default("usuario")
+  prestamos Prestamo[]
+  historial Historial[]
 }
 
 model Libro {
@@ -25,6 +28,29 @@ model Libro {
   autor String
   categoria String
   descripcion String?
+  disponible Boolean @default(true)
+  prestamos Prestamo[]
+  historial Historial[]
+}
+
+model Prestamo {
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  libroId Int
+  fechaPrestamo DateTime @default(now())
+  fechaDevolucion DateTime?
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  libro Libro @relation(fields: [libroId], references: [id])
+}
+
+model Historial {
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  libroId Int
+  fechaPrestamo DateTime
+  fechaDevolucion DateTime
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  libro Libro @relation(fields: [libroId], references: [id])
 }
 
 model TokenRevocado {
